@@ -6,21 +6,24 @@ using SimpleJSON;
 
 public class ServerTalker : MonoBehaviour
 {
+    private string remote_url = "http://16.170.112.13:8000/";
+    private string local_url = "http://localhost:8000/api/mushroom/location/";
+    public double latitude = 48.15945;
+    public double longitude = 11.56434;
+
     // Start is called before the first frame update
+    
     void Start()
     {
-
-        // Make a web request to get info from the server
-        // this will be a text response.
-        // This will return/continue IMMEDIATELY, but the coroutine
-        // will take several MS to actually get a response from the server.
-        StartCoroutine( GetWebData("http://localhost:8000/user/", "myAwesomeID" ) );
+        StartCoroutine( GetWebData(local_url) );
 
     }
+    
 
-    IEnumerator GetWebData( string address, string myID )
+    IEnumerator GetWebData( string address)
     {
-        UnityWebRequest www = UnityWebRequest.Get(address + myID);
+        // UnityWebRequest www = UnityWebRequest.Get(address + GPS.Instance.latitude.ToString()+GPS.Instance.longitude.ToString());
+        UnityWebRequest www = UnityWebRequest.Get(address + latitude.ToString()+"/"+longitude.ToString());
         yield return www.SendWebRequest();
 
         if(www.result != UnityWebRequest.Result.Success)
@@ -38,16 +41,8 @@ public class ServerTalker : MonoBehaviour
 
     void ProcessServerResponse( string rawResponse )
     {
-        // That text, is actually JSON info, so we need to 
-        // parse that into something we can navigate.
-
+       
         JSONNode node = JSON.Parse( rawResponse );
-
-        // Output some stuff to the console so that we know
-        // that it worked.
-
-        Debug.Log("category: " + node["category"]);
-        Debug.Log("location " + node["location"]);
     }
 
     
